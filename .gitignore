@@ -31,3 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Sensitive Files ###
+.env
+*.json
+!pom.json
+src/main/resources/*firebase*.json
+
