@@ -1,0 +1,37 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: ${APP_NAME}
+    description: ${APP_DESCRIPTION}
+
+  data:
+    mongodb:
+      uri: mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_HOST}:${MONGODB_PORT}/${MONGODB_DB}?authSource=admin&authMechanism=SCRAM-SHA-256
+
+logging:
+  level:
+    root: ${LOGGING_LEVEL_ROOT}
+    org:
+      hibernate:
+        type: ${LOGGING_LEVEL_HIBERNATE}
+      springframework:
+        web: ${LOGGING_LEVEL_SPRING}
+
+springdoc:
+  api-docs:
+    enabled: ${API_DOCS_ENABLED:true}
+    path: /api-docs
+  swagger-ui:
+    enabled: ${SWAGGER_ENABLED:true}
+    path: /swagger-ui.html
+    operationsSorter: alpha
+    tagsSorter: alpha
+  show-actuator: true
+
+firebase:
+  app: ${FIREBASE_APP_NAME}
+  credentials:
+    file: ${FIREBASE_CREDENTIALS_FILE}
+  project-id: ${FIREBASE_PROJECT_ID}

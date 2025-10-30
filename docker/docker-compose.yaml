@@ -1,0 +1,43 @@
+name: isu-backend-pushnoti
+
+services:
+  spring-app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: ${PROJECT_NAME}-server
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    depends_on:
+      - mongodb
+    env_file:
+      - ../.env
+    environment:
+      MONGODB_HOST: mongodb
+      MONGODB_PORT: 27017
+    networks:
+      - isu-pushnoti-network
+
+  mongodb:
+    image: mongo:7.0
+    container_name: ${PROJECT_NAME}-mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGODB_DB}
+    ports:
+      - ${MONGODB_EXTERNAL_PORT}:27017
+    volumes:
+      - mongodb-data:/data/db
+      - ../../var/logs/mongodb:/var/log/mongodb
+    networks:
+      - isu-pushnoti-network
+
+volumes:
+  mongodb-data:
+
+networks:
+  isu-pushnoti-network:
+    driver: bridge
+
