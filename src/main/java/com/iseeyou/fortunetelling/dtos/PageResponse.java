@@ -14,18 +14,6 @@ public class PageResponse<T> extends AbstractBaseResponse {
     private List<T> data;
     private PagingResponse paging;
 
-    public PageResponse(int statusCode, String message, List<T> data, PagingResponse paging) {
-        super();
-        this.statusCode = statusCode;
-        this.message = message;
-        this.data = data;
-        this.paging = paging;
-    }
-
-    protected PageResponse() {
-        super();
-    }
-
     @Data
     @AllArgsConstructor
     public static class PagingResponse {
