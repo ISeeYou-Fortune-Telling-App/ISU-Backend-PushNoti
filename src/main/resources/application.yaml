@@ -1,6 +1,9 @@
 server:
   port: ${SERVER_PORT:8080}
 
+app:
+  secret: ${APP_SECRET:myDefaultSecretKeyForJWTTokenParsing1234567890}
+
 spring:
   application:
     name: ${APP_NAME}
@@ -12,12 +15,17 @@ spring:
 
 logging:
   level:
-    root: ${LOGGING_LEVEL_ROOT}
+    root: ${LOGGING_LEVEL_ROOT:INFO}
+    com:
+      iseeyou:
+        fortunetelling:
+          security: DEBUG
     org:
       hibernate:
         type: ${LOGGING_LEVEL_HIBERNATE}
       springframework:
         web: ${LOGGING_LEVEL_SPRING}
+        security: DEBUG
 
 springdoc:
   api-docs:

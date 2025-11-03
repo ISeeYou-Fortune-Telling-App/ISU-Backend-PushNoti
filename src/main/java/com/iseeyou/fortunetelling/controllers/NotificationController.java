@@ -77,6 +77,33 @@ public class NotificationController extends AbstractBaseController {
                 "Notifications retrieved successfully");
     }
 
+    @GetMapping("/me")
+    @Operation(
+            summary = "Get all my notifications with pagination (using JWT authentication)",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Successful operation",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = PageResponse.class)
+                            )
+                    )
+            }
+    )
+    public ResponseEntity<PageResponse<Notification>> getAllMyNotifications(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "15") int limit,
+            @RequestParam(defaultValue = "desc") String sortType,
+            @RequestParam(defaultValue = "createdAt") String sortBy
+    ) {
+        Pageable pageable = createPageable(page, limit, sortType, sortBy);
+
+        return responseFactory.successPage(
+                pushNotificationService.getAllMyNotifications(pageable),
+                "My notifications retrieved successfully");
+    }
+
     @PatchMapping("/{notificationId}/read")
     @Operation(
             summary = "Mark notification as read",

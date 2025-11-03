@@ -23,6 +23,7 @@ import java.util.Map;
 public class PushNotificationServiceImpl implements PushNotificationService {
     private final PushNotificationRepository pushNotificationRepository;
     private final FirebaseMessaging firebaseMessaging;
+    private final com.iseeyou.fortunetelling.services.AuthService authService;
 
     @Override
     public Notification create(NotificationCreateRequest notificationCreateRequest) {
@@ -61,6 +62,12 @@ public class PushNotificationServiceImpl implements PushNotificationService {
     @Override
     public Page<Notification> getNotificationsByRecipientId(String recipientId, Pageable pageable) {
         return pushNotificationRepository.getNotificationsByRecipientId(recipientId, pageable);
+    }
+
+    @Override
+    public Page<Notification> getAllMyNotifications(Pageable pageable) {
+        String currentUserId = authService.getCurrentUserId().toString();
+        return getNotificationsByRecipientId(currentUserId, pageable);
     }
 
     private void sendPushNotification(String fcmToken, String title, String body, String imageUrl) {

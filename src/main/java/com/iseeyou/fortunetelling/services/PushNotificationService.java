@@ -10,4 +10,5 @@ public interface PushNotificationService {
     Notification read(String notificationId);
     void delete(String notificationId);
     Page<Notification> getNotificationsByRecipientId(String recipientId, Pageable pageable);
+    Page<Notification> getAllMyNotifications(Pageable pageable);
 }
