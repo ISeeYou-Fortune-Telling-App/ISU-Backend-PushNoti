@@ -1,6 +1,5 @@
 package com.iseeyou.fortunetelling.security;
 
-import com.iseeyou.fortunetelling.services.AuthService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -8,7 +7,6 @@ import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -18,14 +16,8 @@ import java.security.Key;
 @RequiredArgsConstructor
 public class JwtTokenProvider {
 
-    private final AuthService authService;
-
     @Value("${app.secret}")
     private String appSecret;
-
-    public JwtUserDetails getPrincipal(final Authentication authentication) {
-        return authService.getPrincipal(authentication);
-    }
 
     public String extractJwtFromRequest(final jakarta.servlet.http.HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");

@@ -1,4 +1,4 @@
-name: isu-backend-pushnoti
+name: isu-project
 
 services:
   spring-app:
@@ -16,7 +16,7 @@ services:
       MONGODB_HOST: mongodb
       MONGODB_PORT: 27017
     networks:
-      - isu-pushnoti-network
+      - isu-project
 
   mongodb:
     image: mongo:7.0
@@ -32,12 +32,12 @@ services:
       - mongodb-data:/data/db
       - ../../var/logs/mongodb:/var/log/mongodb
     networks:
-      - isu-pushnoti-network
+      - isu-project
 
 volumes:
   mongodb-data:
 
 networks:
-  isu-pushnoti-network:
+  isu-project:
     driver: bridge
 
