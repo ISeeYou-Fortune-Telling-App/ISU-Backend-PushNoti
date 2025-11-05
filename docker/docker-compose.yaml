@@ -16,7 +16,7 @@ services:
       MONGODB_HOST: mongodb
       MONGODB_PORT: 27017
     networks:
-      - isu-project
+      - isu-pushnoti-service
 
   mongodb:
     image: mongo:7.0
@@ -32,12 +32,12 @@ services:
       - mongodb-data:/data/db
       - ../../var/logs/mongodb:/var/log/mongodb
     networks:
-      - isu-project
+      - isu-pushnoti-service
 
 volumes:
   mongodb-data:
 
 networks:
-  isu-project:
+  isu-pushnoti-service:
     driver: bridge
 
