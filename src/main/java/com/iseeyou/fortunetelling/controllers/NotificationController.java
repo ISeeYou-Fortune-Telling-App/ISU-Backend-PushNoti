@@ -22,7 +22,7 @@ import org.springframework.http.HttpStatus;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/notification")
+@RequestMapping("")
 @Tag(name = "001. Notification", description = "Notification API")
 @Slf4j
 public class NotificationController extends AbstractBaseController {
