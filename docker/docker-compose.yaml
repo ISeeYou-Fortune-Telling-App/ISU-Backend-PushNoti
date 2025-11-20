@@ -1,5 +1,3 @@
-name: isu-project
-
 services:
   spring-app:
     build:
