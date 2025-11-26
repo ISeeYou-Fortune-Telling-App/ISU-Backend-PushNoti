@@ -1,5 +1,7 @@
+name: isu-pushnoti-service
+
 services:
-  spring-app:
+  pushnoti-service:
     build:
       context: ..
       dockerfile: docker/Dockerfile
@@ -15,6 +17,7 @@ services:
       MONGODB_PORT: 27017
     networks:
       - isu-pushnoti-service
+      - isu-microservice-external-network
 
   mongodb:
     image: mongo:7.0
@@ -38,4 +41,5 @@ volumes:
 networks:
   isu-pushnoti-service:
     driver: bridge
-
+  isu-microservice-external-network:
+    external: true
