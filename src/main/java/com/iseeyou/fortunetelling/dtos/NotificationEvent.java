@@ -13,7 +13,8 @@ import java.util.Map;
 @Setter
 @NoArgsConstructor
 @SuperBuilder
-public class NotificationCreateRequest {
+public class NotificationEvent {
+    private String eventId;
     @NotNull
     private String fcmToken;
     private String notificationTitle;

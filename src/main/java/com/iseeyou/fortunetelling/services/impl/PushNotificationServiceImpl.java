@@ -1,7 +1,7 @@
 package com.iseeyou.fortunetelling.services.impl;
 
 import com.google.firebase.messaging.*;
-import com.iseeyou.fortunetelling.dtos.NotificationCreateRequest;
+import com.iseeyou.fortunetelling.dtos.NotificationEvent;
 import com.iseeyou.fortunetelling.exceptions.ResourceNotFoundException;
 import com.iseeyou.fortunetelling.models.Notification;
 import com.iseeyou.fortunetelling.repositories.PushNotificationRepository;
@@ -26,21 +26,21 @@ public class PushNotificationServiceImpl implements PushNotificationService {
     private final com.iseeyou.fortunetelling.services.AuthService authService;
 
     @Override
-    public Notification create(NotificationCreateRequest notificationCreateRequest) {
+    public Notification create(NotificationEvent notificationEvent) {
         Notification newNotification = new Notification();
 
-        newNotification.setNotificationTitle(notificationCreateRequest.getNotificationTitle());
-        newNotification.setNotificationBody(notificationCreateRequest.getNotificationBody());
-        newNotification.setRecipientId(notificationCreateRequest.getRecipientId());
-        newNotification.setTargetId(notificationCreateRequest.getTargetId());
-        newNotification.setTargetType(notificationCreateRequest.getTargetType());
-        newNotification.setImageUrl(notificationCreateRequest.getImageUrl());
+        newNotification.setNotificationTitle(notificationEvent.getNotificationTitle());
+        newNotification.setNotificationBody(notificationEvent.getNotificationBody());
+        newNotification.setRecipientId(notificationEvent.getRecipientId());
+        newNotification.setTargetId(notificationEvent.getTargetId());
+        newNotification.setTargetType(notificationEvent.getTargetType());
+        newNotification.setImageUrl(notificationEvent.getImageUrl());
         
         sendPushNotification(
-                notificationCreateRequest.getFcmToken(),
-                notificationCreateRequest.getNotificationTitle(),
-                notificationCreateRequest.getNotificationBody(),
-                notificationCreateRequest.getImageUrl()
+                notificationEvent.getFcmToken(),
+                notificationEvent.getNotificationTitle(),
+                notificationEvent.getNotificationBody(),
+                notificationEvent.getImageUrl()
         );
 
         return pushNotificationRepository.save(newNotification);

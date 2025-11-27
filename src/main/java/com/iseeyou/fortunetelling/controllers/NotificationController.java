@@ -1,7 +1,7 @@
 package com.iseeyou.fortunetelling.controllers;
 
 import com.iseeyou.fortunetelling.controllers.base.AbstractBaseController;
-import com.iseeyou.fortunetelling.dtos.NotificationCreateRequest;
+import com.iseeyou.fortunetelling.dtos.NotificationEvent;
 import com.iseeyou.fortunetelling.dtos.PageResponse;
 import com.iseeyou.fortunetelling.models.Notification;
 import com.iseeyou.fortunetelling.services.PushNotificationService;
@@ -43,7 +43,7 @@ public class NotificationController extends AbstractBaseController {
             }
     )
     public ResponseEntity<SingleResponse<Notification>> createNotification(
-            @RequestBody NotificationCreateRequest notification
+            @RequestBody NotificationEvent notification
     ) {
         Notification createdNotification = pushNotificationService.create(notification);
         return responseFactory.success(createdNotification, "Notification created successfully", HttpStatus.CREATED);
