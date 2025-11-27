@@ -1,7 +1,6 @@
 package com.iseeyou.fortunetelling.controllers;
 
 import com.iseeyou.fortunetelling.controllers.base.AbstractBaseController;
-import com.iseeyou.fortunetelling.dtos.NotificationEvent;
 import com.iseeyou.fortunetelling.dtos.PageResponse;
 import com.iseeyou.fortunetelling.models.Notification;
 import com.iseeyou.fortunetelling.services.PushNotificationService;
@@ -18,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.iseeyou.fortunetelling.dtos.SingleResponse;
 import com.iseeyou.fortunetelling.dtos.SuccessResponse;
-import org.springframework.http.HttpStatus;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,27 +25,6 @@ import org.springframework.http.HttpStatus;
 @Slf4j
 public class NotificationController extends AbstractBaseController {
     private final PushNotificationService pushNotificationService;
-
-    @PostMapping
-    @Operation(
-            summary = "Create a new notification",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "201",
-                            description = "Notification created successfully",
-                            content = @Content(
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = SingleResponse.class)
-                            )
-                    )
-            }
-    )
-    public ResponseEntity<SingleResponse<Notification>> createNotification(
-            @RequestBody NotificationEvent notification
-    ) {
-        Notification createdNotification = pushNotificationService.create(notification);
-        return responseFactory.success(createdNotification, "Notification created successfully", HttpStatus.CREATED);
-    }
 
     @GetMapping
     @Operation(
