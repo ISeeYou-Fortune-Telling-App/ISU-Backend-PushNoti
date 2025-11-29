@@ -6,6 +6,7 @@ import com.iseeyou.fortunetelling.exceptions.ResourceNotFoundException;
 import com.iseeyou.fortunetelling.models.Notification;
 import com.iseeyou.fortunetelling.repositories.PushNotificationRepository;
 import com.iseeyou.fortunetelling.services.PushNotificationService;
+import com.iseeyou.fortunetelling.services.UserFcmTokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -24,6 +26,7 @@ public class PushNotificationServiceImpl implements PushNotificationService {
     private final PushNotificationRepository pushNotificationRepository;
     private final FirebaseMessaging firebaseMessaging;
     private final com.iseeyou.fortunetelling.services.AuthService authService;
+    private final UserFcmTokenService userFcmTokenService;
 
     @Override
     public Notification create(NotificationEvent notificationEvent) {
@@ -36,12 +39,8 @@ public class PushNotificationServiceImpl implements PushNotificationService {
         newNotification.setTargetType(notificationEvent.getTargetType());
         newNotification.setImageUrl(notificationEvent.getImageUrl());
         
-        sendPushNotification(
-                notificationEvent.getFcmToken(),
-                notificationEvent.getNotificationTitle(),
-                notificationEvent.getNotificationBody(),
-                notificationEvent.getImageUrl()
-        );
+        // Gửi notification đến FCM token(s)
+        sendNotificationToUser(notificationEvent);
 
         return pushNotificationRepository.save(newNotification);
     }
@@ -68,6 +67,42 @@ public class PushNotificationServiceImpl implements PushNotificationService {
     public Page<Notification> getAllMyNotifications(Pageable pageable) {
         String currentUserId = authService.getCurrentUserId().toString();
         return getNotificationsByRecipientId(currentUserId, pageable);
+    }
+
+    /**
+     * Gửi notification đến user. Nếu có recipientId, sẽ lấy tất cả FCM tokens của user đó.
+     * Nếu không có recipientId nhưng có fcmToken, sẽ gửi trực tiếp đến token đó.
+     */
+    private void sendNotificationToUser(NotificationEvent event) {
+        String title = event.getNotificationTitle();
+        String body = event.getNotificationBody();
+        String imageUrl = event.getImageUrl();
+
+        // Nếu có recipientId, lấy tất cả FCM tokens của user
+        if (event.getRecipientId() != null && !event.getRecipientId().isEmpty()) {
+            List<String> fcmTokens = userFcmTokenService.getFcmTokensByUserId(event.getRecipientId());
+
+            if (fcmTokens.isEmpty()) {
+                log.warn("No FCM tokens found for user: {}", event.getRecipientId());
+
+                // Nếu có fcmToken trong event, vẫn thử gửi
+                if (event.getFcmToken() != null && !event.getFcmToken().isEmpty()) {
+                    sendPushNotification(event.getFcmToken(), title, body, imageUrl);
+                }
+            } else {
+                log.info("Sending notification to {} device(s) for user: {}",
+                        fcmTokens.size(), event.getRecipientId());
+
+                // Gửi đến tất cả tokens của user
+                for (String token : fcmTokens) {
+                    sendPushNotification(token, title, body, imageUrl);
+                }
+            }
+        }
+        // Nếu không có recipientId nhưng có fcmToken, gửi trực tiếp
+        else if (event.getFcmToken() != null && !event.getFcmToken().isEmpty()) {
+            sendPushNotification(event.getFcmToken(), title, body, imageUrl);
+        }
     }
 
     private void sendPushNotification(String fcmToken, String title, String body, String imageUrl) {
@@ -97,16 +132,15 @@ public class PushNotificationServiceImpl implements PushNotificationService {
                     .build();
 
             String response = firebaseMessaging.send(pushNotification);
-            System.out.println("Successfully sent notification to: " + fcmToken);
-            System.out.println("FCM Response: " + response);
+            log.info("Successfully sent notification to: {}", fcmToken);
+            log.debug("FCM Response: {}", response);
         } catch (FirebaseMessagingException e) {
-            System.err.println("Failed to send notification to token: " + fcmToken);
-            System.err.println("Error code: " + e.getErrorCode() + ", message: " + e.getMessage());
+            log.error("Failed to send notification to token: {}", fcmToken);
+            log.error("Error code: {}, message: {}", e.getErrorCode(), e.getMessage());
 
             // Handle specific error cases
         } catch (Exception e) {
-            System.err.println("Unexpected error sending notification: " + e.getMessage());
-            e.printStackTrace();
+            log.error("Unexpected error sending notification: {}", e.getMessage(), e);
         }
     }
 }
